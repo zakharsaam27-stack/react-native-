@@ -3,6 +3,7 @@ import {
   DATABASE_ID,
   databases,
   HABITS_COLLECTION_ID,
+  listAllDocuments,
 } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
 import { Habit, HabitCompletion } from "@/types/database.type";
@@ -41,12 +42,11 @@ export default function SreaksScreen() {
 
   const fetchCompletions = async () => {
     try {
-      const response = await databases.listDocuments(
+      const completions = await listAllDocuments<HabitCompletion>(
         DATABASE_ID,
         COMPLETIONS_COLLECTION_ID,
         [Query.equal("user_id", user?.$id ?? "")],
       );
-      const completions = response.documents as unknown as HabitCompletion[];
       setCompletedHabits(completions);
     } catch (error) {
       console.error(error);
@@ -102,7 +102,6 @@ export default function SreaksScreen() {
 
       lastDate = date;
     });
-
     return {streak: currentStreak, bestStreak, total};
   };
 

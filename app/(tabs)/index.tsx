@@ -2,6 +2,7 @@ import {
   COMPLETIONS_COLLECTION_ID,
   DATABASE_ID,
   databases,
+  deleteAllDocuments,
   HABITS_COLLECTION_ID,
 } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
@@ -68,6 +69,9 @@ export default function Index() {
     deletingRef.current = true;
 
     try {
+      await deleteAllDocuments(DATABASE_ID, COMPLETIONS_COLLECTION_ID, [
+        Query.equal("habit_id", id),
+      ]);
       await databases.deleteDocument(DATABASE_ID, HABITS_COLLECTION_ID, id);
 
       await fetchHabits();
@@ -82,6 +86,7 @@ export default function Index() {
     if (!user || completedHabits?.includes(id)) return;
     try {
       const currentDate = new Date().toISOString();
+
       await databases.createDocument(
         DATABASE_ID,
         COMPLETIONS_COLLECTION_ID,
